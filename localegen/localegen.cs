@@ -96,13 +96,13 @@ namespace localegen
                 {
                     idCount++;
                     file.Write("    ");
-                    file.Write($"'{id.Key}': {{\r\n");
+                    file.Write(isJson ? $"\"{id.Key}\": {{\r\n" : $"'{id.Key}': {{\r\n");
                     int count = 0;
                     foreach (var lang in id.Value)
                     {
                         count++;
                         file.Write("        ");
-                        file.Write($"'{lang.Key}': '{lang.Value}'");
+                        file.Write(isJson ? $"\"{lang.Key}\": \"{lang.Value}\"" : $"'{lang.Key}': '{lang.Value}'");
 
                         if (count != id.Value.Count)
                             file.Write(",");
@@ -116,7 +116,7 @@ namespace localegen
                     file.Write("\r\n");
                 }
 
-                file.WriteLine("}");
+                file.Write(isJson ? "}" : "};\r\n");
             }
 
             Console.WriteLine("Locale file was generated successfully.");
