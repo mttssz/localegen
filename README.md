@@ -1,6 +1,9 @@
 # localegen
 Excel file to JS object/JSON converter with support for multiple locales
 
+# Release:
+For the last release, visit the [releases](https://github.com/mttssz/localegen/releases) tab of the repository.
+
 # Usage:
 
 Use the following syntax to generate your locale file:
