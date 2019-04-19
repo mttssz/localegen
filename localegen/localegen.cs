@@ -72,11 +72,11 @@ namespace localegen
                 var countryCodes = new List<string>();
 
                 for (int i = 2; i <= width; i++)
-                    countryCodes.Add((string)ws.Cell(1, i).Value);
+                    countryCodes.Add(ws.Cell(1, i).Value.ToString().ToUpper());
 
                 for (int y = 2; y <= height; y++)
                 {
-                    string identifier = (string)ws.Cell(y, 1).Value;
+                    string identifier = ws.Cell(y, 1).Value.ToString().ToUpper();
 
                     if (localeString.TryGetValue(identifier, out _))
                         Console.WriteLine($"WARNING: Key {identifier} already exists; Replacing.");
@@ -85,7 +85,7 @@ namespace localegen
 
                     for (int x = 2; x <= width; x++)
                     {
-                        localeString[identifier][countryCodes[x - 2]] = (string)ws.Cell(y, x).Value;
+                        localeString[identifier][countryCodes[x - 2]] = ws.Cell(y, x).Value.ToString();
                     }
                 }
             }
