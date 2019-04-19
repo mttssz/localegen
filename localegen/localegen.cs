@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,12 +42,8 @@ namespace localegen
                 return;
             }
 
-            if (!outputFile.EndsWith(".js") && !outputFile.EndsWith(".json"))
-            {
-                Console.WriteLine("The input file must be a .js or a .json file. Aborting.");
-                WaitForKey();
-                return;
-            }
+            if (!outputFile.EndsWith(".json"))
+                outputFile += ".json";
 
             if (!File.Exists(inputFile))
             {
@@ -90,38 +87,11 @@ namespace localegen
                 }
             }
 
-            bool isJson = outputFile.EndsWith(".json");
+            string jsonData = JsonConvert.SerializeObject(localeString, Formatting.Indented);
 
-            using (var file = File.CreateText(outputFile))
+            using (var jsonFile = File.CreateText(outputFile))
             {
-                file.WriteLine(isJson ? "{" : "module.exports = {");
-
-                int idCount = 0;
-                foreach (var id in localeString)
-                {
-                    idCount++;
-                    file.Write("    ");
-                    file.Write(isJson ? $"\"{id.Key}\": {{\r\n" : $"'{id.Key}': {{\r\n");
-                    int count = 0;
-                    foreach (var lang in id.Value)
-                    {
-                        count++;
-                        file.Write("        ");
-                        file.Write(isJson ? $"\"{lang.Key}\": \"{lang.Value}\"" : $"'{lang.Key}': '{lang.Value}'");
-
-                        if (count != id.Value.Count)
-                            file.Write(",");
-
-                        file.Write("\r\n");
-                    }
-                    file.Write("    }");
-                    if (idCount != localeString.Count)
-                        file.Write(",");
-
-                    file.Write("\r\n");
-                }
-
-                file.Write(isJson ? "}" : "};\r\n");
+                jsonFile.Write(jsonData);
             }
 
             Console.WriteLine("Locale file was generated successfully.");
