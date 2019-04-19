@@ -26,10 +26,14 @@ namespace localegen
                 WaitForKey();
                 return;
             }
-
-            string inputFile = args[0];
-            string outputFile = args[1];
-
+            string inputFile, outputFile;
+#if DEBUG
+            inputFile = "teszt.xlsx";
+            outputFile = "teszt.json";
+#else
+            inputFile = args[0];
+            outputFile = args[1];
+#endif
             if (!inputFile.EndsWith(".xls") && !inputFile.EndsWith(".xlsx"))
             {
                 Console.WriteLine("The input file must be an .xls or an .xlsx file. Aborting.");
@@ -44,7 +48,7 @@ namespace localegen
                 return;
             }
 
-            if(!File.Exists(inputFile))
+            if (!File.Exists(inputFile))
             {
                 Console.WriteLine($"The file {Path.GetFullPath(inputFile)} does not exist. Aborting.");
                 WaitForKey();
@@ -58,7 +62,8 @@ namespace localegen
 
             Console.WriteLine("Starting generation.");
 
-            using (var wb = new XLWorkbook(inputFile))
+            using (var fileStream = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (var wb = new XLWorkbook(fileStream))
             {
                 var ws = wb.Worksheet(1);
                 int width = ws.LastColumnUsed().ColumnNumber();
@@ -73,7 +78,7 @@ namespace localegen
                 {
                     string identifier = (string)ws.Cell(y, 1).Value;
 
-                    if(localeString.TryGetValue(identifier, out _))
+                    if (localeString.TryGetValue(identifier, out _))
                         Console.WriteLine($"WARNING: Key {identifier} already exists; Replacing.");
 
                     localeString[identifier] = new Dictionary<string, string>();
